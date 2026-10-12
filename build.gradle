@@ -1,3 +1,13 @@
-plugins {
-    id 'com.android.application' version '8.7.3' apply false
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'com.sonora.studio'
+    compileSdk 35
+    defaultConfig {
+        applicationId 'com.sonora.studio'
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName '0.1.0'
+    }
 }
