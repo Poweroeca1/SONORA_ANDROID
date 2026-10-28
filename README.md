@@ -1,21 +1,44 @@
-# SONORA AI Studio — Android project starter
+# SONORA AI Studio
 
-SONORA is a native Android app concept combining:
-- Music generation prompt composer (AI provider hook point)
-- Image/video lyric clip editor
-- Multi-image scene timeline
-- 5-minute maximum export configuration
-- Local media import and project save
+SONORA is a native Android music and lyric-video studio concept. The plan is to provide:
+- Music prompt composer with real server-side generation
+- Local audio/image import and saved projects
+- Lyric-video timeline with text overlays and scene ordering
+- Video export capped at 300 seconds (5 minutes)
+- Multilingual interface and dark, premium music-studio visual design
 
-## Important honest limitation
-This repository is an Android Studio source project, not a compiled APK. No Android SDK/Gradle build toolchain is present in the creation environment, so a real APK could not be compiled and verified here. The generation buttons show provider setup placeholders; no Suno or Renderforest API is secretly included. Suno and Renderforest services are proprietary. Free/open source models can be self-hosted, but MusicGen's weights are CC-BY-NC 4.0 and not approved for commercial use without considering its terms; AnimateDiff needs a suitable computer/GPU and model-specific licenses.
+## Current status (honest)
 
-## Build APK
-Open this project with Android Studio, allow Gradle sync, then Build > Build APK(s). The GitHub Actions workflow also defines an Android build if placed in a repository.
+- The original Android project is packaged in `SONORA_Android.zip`.
+- A first FastAPI music-backend prototype is now in `backend/`. It exposes `GET /health` and `POST /api/music/generate`, using the Hugging Face Transformers MusicGen model by default.
+- **The Android app is not yet connected to the backend.** The API has not yet been deployed or end-to-end tested, and this commit is not proof that generation works on a live server.
+- The backend currently generates short clips (up to 30 seconds per request); it does not yet create a complete five-minute song/video.
+- A server with enough memory is needed; a GPU is strongly recommended. Free hosting may sleep or lack the resources required.
 
-## Model plan
-- MusicGen: local/self-host music generation service prototype; check model license before use.
-- AnimateDiff / Stable Video Diffusion: optional self-host image-to-video service; needs GPU resources.
-- FFmpeg: final clip muxing and hard cap at 300 seconds.
+## Backend prototype
 
-The app itself can remain free/open source; hosted generation has ongoing compute costs, so genuinely unlimited cloud generation cannot be promised for free.
+See [backend/README.md](backend/README.md). To run it on a suitable server:
+
+```bash
+cd backend
+python -m venv .venv
+# Activate the environment, then:
+pip install -r requirements.txt
+uvicorn main:app --host 0.0.0.0 --port 8000
+```
+
+Check `/health` and `/docs` on the server before connecting the Android app. Do not put API keys in the APK or commit secrets to GitHub.
+
+## Model and licensing
+
+The default model is `facebook/musicgen-small`. Its model-card and CC-BY-NC terms must be reviewed before commercial use. Check the exact license of any model before distributing or monetizing the app. Suno and Renderforest are proprietary services; this project does not include their private APIs.
+
+## Next milestones
+
+1. Verify the backend dependency install and health endpoint on an actual host.
+2. Add a configurable HTTPS backend URL to Android and wire the generation screen to the real API.
+3. Save generated audio to the device and display it in the song library.
+4. Build the lyric-video timeline and export flow, enforcing a 300-second maximum.
+5. Test the complete flow on a physical Android device before calling it complete.
+
+The app can be free/open source, but hosted inference has real compute costs. Unlimited cloud generation cannot be promised for free.
